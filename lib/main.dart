@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:lightrixapp/pages/livecontrol.dart';
-import 'package:lightrixapp/pages/nodelist.dart';
-import 'package:lightrixapp/pages/showcontrol.dart';
+import 'package:ltxremote/pages/livecontrol.dart';
+import 'package:ltxremote/pages/nodelist.dart';
+import 'package:ltxremote/pages/showcontrol.dart';
 
 import 'engines/nodeengine.dart';
 

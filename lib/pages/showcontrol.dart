@@ -1,6 +1,6 @@
 import 'dart:math';
-import 'package:lightrixapp/engines/nodeengine.dart';
-import 'package:lightrixapp/engines/showengine.dart';
+import 'package:ltxremote/engines/nodeengine.dart';
+import 'package:ltxremote/engines/showengine.dart';
 import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';

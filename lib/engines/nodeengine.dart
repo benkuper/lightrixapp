@@ -5,7 +5,8 @@ import 'dart:typed_data';
 import 'dart:ui';
 
 import 'package:flutter/cupertino.dart';
-import 'package:lightrixapp/engines/node.dart';
+import 'package:ltxremote/engines/node.dart';
+
 import 'package:multicast_lock/multicast_lock.dart';
 import 'package:udp/udp.dart';
 import 'nodemanager.dart';

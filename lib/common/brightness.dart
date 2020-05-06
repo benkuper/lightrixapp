@@ -1,7 +1,7 @@
 
 import 'package:flutter/material.dart';
-import 'package:lightrixapp/engines/node.dart';
-import 'package:lightrixapp/engines/nodeengine.dart';
+import 'package:ltxremote/engines/node.dart';
+import 'package:ltxremote/engines/nodeengine.dart';
 
 class BrightnessSlider extends StatefulWidget {
   BrightnessSlider({this.node}) : super();

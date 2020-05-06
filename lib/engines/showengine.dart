@@ -4,7 +4,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:just_audio/just_audio.dart';
-import 'package:lightrixapp/engines/nodeengine.dart';
+import 'package:ltxremote/engines/nodeengine.dart';
 import 'package:path/path.dart' as path;
 
 class ShowControlEngine {

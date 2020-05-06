@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
-import 'package:lightrixapp/common/effects.dart';
-import 'package:lightrixapp/engines/nodeengine.dart';
+import 'package:ltxremote/common/effects.dart';
+import 'package:ltxremote/engines/nodeengine.dart';
 import '../common/colorpicker.dart';
 import '../common/brightness.dart';
 

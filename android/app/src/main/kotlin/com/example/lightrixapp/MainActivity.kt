@@ -1,4 +1,4 @@
-package com.example.lightrixapp
+package com.lightrix.ltxremote
 
 import androidx.annotation.NonNull;
 import io.flutter.embedding.android.FlutterActivity

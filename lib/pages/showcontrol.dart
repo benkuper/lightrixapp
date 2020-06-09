@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:ltxremote/engines/nodeengine.dart';
 import 'package:ltxremote/engines/showengine.dart';
 import 'dart:io';
@@ -375,8 +376,20 @@ class _AudioChooserState extends State<AudioChooser> {
   String fileName = "";
 
   void chooseAudioFile() async {
-    File file = await FilePicker.getFile(type: FileType.audio);
-    widget.onFileChanged(file);
+    //add the wtf file to force using generic picker and not media picker
+    FilePicker.getFile(type: FileType.any).then((file){
+      if(file == null) 
+      {
+      }else
+      {
+        widget.onFileChanged(file);
+      }
+      
+    }).catchError((error)
+    {
+      Fluttertoast.showToast(
+        msg:"[FilePicker] Error selecting audio file : "+error.toString(), backgroundColor: Colors.red, textColor: Colors.red[100]);
+    });
   }
 
   void clearAudioFile() {

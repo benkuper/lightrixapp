@@ -33,16 +33,11 @@ class _StrobeSliderState extends State<StrobeSlider> {
         min: 0,
         max: 9,
         divisions: 10,
-        activeColor: (widget.node == null?NodeEngine.instance.currentStrobe:widget.node.currentStrobe) > 0 ? Colors.teal : Colors.grey,
+        activeColor: (widget.node == null?NodeEngine.instance.currentStrobe:widget.node.currentStrobe) > 0 ? Colors.orange : Colors.grey,
         inactiveColor: (widget.node == null?NodeEngine.instance.currentStrobe:widget.node.currentStrobe) > 0
-            ? HSLColor.fromColor(Colors.teal)
-                .withLightness(.9)
-                .toColor()
-            : Colors.grey[200],
+            ? Colors.orange[100] : Colors.grey[200],
         value: widget.node == null?NodeEngine.instance.currentStrobe:widget.node.currentStrobe,
         onChanged: (value){ NodeEngine.instance.setStrobe(value, nodes:widget.node == null?[]:[widget.node]);}
-        //activeColor: value > 0 ? widget.activeColor : Colors.grey,
-        //inactiveColor: value > 0 ? HSLColor.fromColor(widget.activeColor).withLightness(.9).toColor(): Colors.grey[200])
       )),
       Padding(
           padding: EdgeInsets.fromLTRB(0, 0, 10, 0),

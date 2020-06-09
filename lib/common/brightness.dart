@@ -29,7 +29,9 @@ class _BrightnessSliderState extends State<BrightnessSlider> {
     return Row(children: <Widget>[
       Text("Brightness"),
       Expanded(
-          child: Slider(
+        child: Slider(
+        activeColor: Colors.orange,
+        inactiveColor: Colors.orange[100],
         min: 0,
         max: 8,
         divisions: 8,

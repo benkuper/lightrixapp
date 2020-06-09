@@ -3,7 +3,6 @@ import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:ltxremote/common/effects.dart';
 import 'package:ltxremote/engines/node.dart';
 import 'package:ltxremote/engines/nodeengine.dart';
@@ -72,8 +71,8 @@ class _NodeListPageState extends State<NodeListPage> {
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <
             Widget>[
           Padding(
-              padding: EdgeInsets.all(10),
-              child: Text("PROPS :",
+              padding: EdgeInsets.fromLTRB(0,10,0,10),
+              child: Text("PROPS",
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold))),
           Expanded(
               child: GridView.count(
@@ -98,10 +97,8 @@ class _NodeListPageState extends State<NodeListPage> {
             ],
           )),
           Divider(thickness: 1),
-          Padding(
-              padding: EdgeInsets.all(10),
-              child: Text("GLOBAL CONTROL :",
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold))),
+          Text("GLOBAL CONTROL",
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
           FittedBox(
               fit: BoxFit.fitWidth,
               child: Row(
@@ -125,6 +122,7 @@ class _NodeListPageState extends State<NodeListPage> {
                       onPressed: NodeEngine.instance.powerOff,
                     )
                   ])),
+      Divider(thickness: 1),
         ]));
   }
 }
@@ -211,7 +209,7 @@ class _NodeControlDialogState extends State<NodeControlDialog> {
   final infoBoxKey = GlobalKey<_NodeInfoBoxState>();
   final colorPickerKey = GlobalKey<CircleColorPickerState>();
 
-  static Widget blockPickerLayoutBuilder(
+ /* static Widget blockPickerLayoutBuilder(
       BuildContext context, List<Color> colors, PickerItem child) {
     return Container(
       width: 300.0,
@@ -223,7 +221,7 @@ class _NodeControlDialogState extends State<NodeControlDialog> {
         children: colors.map((Color color) => child(color)).toList(),
       ),
     );
-  }
+  }*/
 
   @override
   initState() {
@@ -270,7 +268,7 @@ class _NodeControlDialogState extends State<NodeControlDialog> {
           child: Column(children: <Widget>[
             Text(
               widget.node.name,
-              style: TextStyle(fontSize: 20),
+              style: TextStyle(fontSize: 16),
             ),
             NodeInfoBox(key: infoBoxKey, node: widget.node),
             SizedBox(height: 20),

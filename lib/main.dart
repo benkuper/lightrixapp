@@ -50,9 +50,6 @@ class _MainPageState extends State<MainPage>
   int curTabIndex = 0;
   final Color mainColor = Color(0xff008080);
 
-  static const TextStyle optionStyle =
-      TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
-
   static List<MenuPage> pages = <MenuPage>[
     // MenuPage(name: "Home", content: DashboardPage(), icon: Icons.home, color:Colors.primaries[0]),
     MenuPage(

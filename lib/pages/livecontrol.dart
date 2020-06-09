@@ -20,7 +20,7 @@ class _LiveControlPageState extends State<LiveControlPage> {
 
   ColorControlMode colorControlMode = ColorControlMode.SWATCH;
 
- final colorPickerKey = GlobalKey<CircleColorPickerState>();
+  final colorPickerKey = GlobalKey<CircleColorPickerState>();
 
   var swatchColors = new List<ColorSwatch>();
 
@@ -60,7 +60,6 @@ class _LiveControlPageState extends State<LiveControlPage> {
 
   static Widget blockPickerLayoutBuilder(
       BuildContext context, List<Color> colors, PickerItem child) {
-   
     return Container(
       width: 300.0,
       height: 360.0,
@@ -73,78 +72,92 @@ class _LiveControlPageState extends State<LiveControlPage> {
     );
   }
 
+  static Widget blockPickerItemBuilder(Color color, bool active, Function onSelect) {
+    HSLColor hsl = HSLColor.fromColor(color);
+    HSLColor contour = hsl.withLightness(.5);
+    if(hsl.lightness == 0) contour = contour.withSaturation(0);
+    return Stack(children:<Widget>[
+    FlatButton(
+      onPressed: onSelect,
+      splashColor: Colors.transparent,
+      padding: EdgeInsets.all(0),
+      child: Image.asset("assets/picker_bg.png", color:hsl.toColor(), colorBlendMode: BlendMode.modulate)
+      ),
+      if(active)
+      Image.asset("assets/picker_fg.png", color:contour.toColor(), colorBlendMode: BlendMode.modulate)
+    
+      ]);
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-           Padding(
-              padding: EdgeInsets.fromLTRB(10,10,0,0),
-              child:Text("COLOR CONTROL :",
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-           ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
+    return Padding(
+        padding: EdgeInsets.fromLTRB(10, 10, 10, 0),
+        child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              RaisedButton(
-                  color: colorControlMode == ColorControlMode.SWATCH
-                      ? Colors.blue
-                      : Colors.grey[200],
-                  child: Text("Simple",
-                      style: TextStyle(
-                        color: colorControlMode == ColorControlMode.SWATCH
-                            ? Colors.lightBlue[100]
-                            : Colors.grey[800],
-                      )),
-                  onPressed: () {
-                    setColorControlMode(ColorControlMode.SWATCH);
-                  }),
-              RaisedButton(
-                  color: colorControlMode == ColorControlMode.PICKER
-                      ? Colors.blue
-                      : Colors.grey[200],
-                  child: Text("Advanced",
-                      style: TextStyle(
-                        color: colorControlMode == ColorControlMode.PICKER
-                            ? Colors.lightBlue[100]
-                            : Colors.grey[800],
-                      )),
-                  onPressed: () {
-                    setColorControlMode(ColorControlMode.PICKER);
-                  }),
-            ],
-          ),
-          if (colorControlMode == ColorControlMode.PICKER)
-            Expanded(
-              child: CircleColorPicker(
-                key: colorPickerKey,
-                initialColor: Colors.blue,
-                onChanged: NodeEngine.instance.sendColor,
-                strokeWidth: 10,
-                thumbSize: 20,
+              Text(
+                "COLOR CONTROL",
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
-            ),
-          if (colorControlMode == ColorControlMode.SWATCH)
-            Expanded(
-              child: Center(
-                  child: BlockPicker(
-                pickerColor: Colors.black,
-                onColorChanged: NodeEngine.instance.sendColor,
-                availableColors: swatchColors,
-                layoutBuilder: blockPickerLayoutBuilder,
-              )),
-            ),
-          Divider(thickness: 1),
-          Padding(
-              padding: EdgeInsets.fromLTRB(10,0,0,0),
-              child: Text("EFFECTS :",
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold))),
-          Padding(
-              padding: EdgeInsets.fromLTRB(10,0,0,0),
-              child: BrightnessSlider()),
-          Padding(
-              padding: EdgeInsets.fromLTRB(10,0,0,0),
-              child: StrobeSlider()),
-        ]);
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  RaisedButton(
+                      color: colorControlMode == ColorControlMode.SWATCH
+                          ? Colors.orange
+                          : Colors.grey[200],
+                      child: Text("Simple",
+                          style: TextStyle(
+                            color: colorControlMode == ColorControlMode.SWATCH
+                                ? Colors.orange[50]
+                                : Colors.grey[800],
+                          )),
+                      onPressed: () {
+                        setColorControlMode(ColorControlMode.SWATCH);
+                      }),
+                  RaisedButton(
+                      color: colorControlMode == ColorControlMode.PICKER
+                          ? Colors.orange
+                          : Colors.grey[200],
+                      child: Text("Advanced",
+                          style: TextStyle(
+                            color: colorControlMode == ColorControlMode.PICKER
+                                ? Colors.orange[50]
+                                : Colors.grey[800],
+                          )),
+                      onPressed: () {
+                        setColorControlMode(ColorControlMode.PICKER);
+                      }),
+                ],
+              ),
+              if (colorControlMode == ColorControlMode.PICKER)
+                Expanded(
+                  child: CircleColorPicker(
+                    key: colorPickerKey,
+                    initialColor: Colors.blue,
+                    onChanged: NodeEngine.instance.sendColor,
+                    strokeWidth: 10,
+                    thumbSize: 20,
+                  ),
+                ),
+              if (colorControlMode == ColorControlMode.SWATCH)
+                Expanded(
+                  child: Center(
+                      child: BlockPicker(
+                    pickerColor: Colors.black,
+                    onColorChanged: NodeEngine.instance.sendColor,
+                    availableColors: swatchColors,
+                    layoutBuilder: blockPickerLayoutBuilder,
+                    itemBuilder: blockPickerItemBuilder,
+                  )),
+                ),
+              Divider(thickness: 1),
+              Text("EFFECTS",
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+              BrightnessSlider(),
+              StrobeSlider(),
+              Divider(thickness: 1),
+            ]));
   }
 }

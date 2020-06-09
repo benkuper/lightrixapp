@@ -124,8 +124,10 @@ class _ShowControlPageState extends State<ShowControlPage> {
           )),
       Divider(),
       */
-          Text("MAIN CONTROL :",
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+          Padding(
+            padding: EdgeInsets.fromLTRB(0,0,0,10),
+             child:Text("MAIN CONTROL",
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold))),
           TimeTransport(
             key: transportKey,
             onPlayPressed: widget.engine.togglePlaying,
@@ -134,9 +136,9 @@ class _ShowControlPageState extends State<ShowControlPage> {
             onNextPressed: NodeEngine.instance.selectNextBank,
             onSeek: widget.engine.seek,
           ),
-          SizedBox(height: 10),
+          Spacer(),
           Divider(thickness: 1),
-          Text("AUDIO :",
+          Text("AUDIO",
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
           AudioChooser(
               key: audioChooserKey,
@@ -145,9 +147,10 @@ class _ShowControlPageState extends State<ShowControlPage> {
               }),
           SizedBox(height: 10),
           Divider(thickness: 1),
-          Text("ADJUSTMENTS :",
+          Text("ADJUSTMENTS",
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-          BrightnessSlider()
+          BrightnessSlider(),
+          Divider(thickness: 1),
         ]));
   }
 }
@@ -347,6 +350,8 @@ class _TimelineState extends State<Timeline> {
           Padding(
               padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
               child: Slider(
+                  activeColor: Colors.orange,
+                  inactiveColor: Colors.orange[100],
                   value: currentTime,
                   min: 0,
                   max: totalTime,

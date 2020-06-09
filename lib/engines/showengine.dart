@@ -112,21 +112,24 @@ class ShowControlEngine {
   void setAudioFile(File file) async {
     currentAudioFile = file;
 
-    if (file == null) return;
+    if (file != null)
+    {
+      audioPlayer.setFilePath(file.path).then( (Duration totalTime)
+        {
+            print("Audio set to file "+file.path+", duration :"+totalTime.inMilliseconds.toString()+" ms");   
+            audioPlayer.stop();
+            
+            hasAudio = true;
+            setTotalTime(totalTime.inMilliseconds / 1000.0);
+            
+          }).catchError((error){
+            hasAudio = false;
+            Fluttertoast.showToast(msg: "Error playing file "+path.basename(file.path)+" : "+error.toString(),backgroundColor: Colors.red, textColor: Colors.red[100]);
+          });
 
-   audioPlayer.setFilePath(file.path).then( (Duration totalTime)
-   {
-      print("Audio set to file "+file.path+", duration :"+totalTime.inMilliseconds.toString()+" ms");   
-      audioPlayer.stop();
-      
-      hasAudio = true;
-      setTotalTime(totalTime.inMilliseconds / 1000.0);
-      
-    }).catchError((error){
-      hasAudio = false;
-       Fluttertoast.showToast(msg: "Error playing file "+path.basename(file.path)+" : "+error.toString(),backgroundColor: Colors.red, textColor: Colors.red[100]);
-    });
+    }
 
+  
     audioFileChanged(currentAudioFile);
 
   }

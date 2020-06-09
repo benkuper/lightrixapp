@@ -58,11 +58,14 @@ class _NodeListPageState extends State<NodeListPage> {
   }
 
   void batchUploadPressed() async {
-    File f = await FilePicker.getFile(
-        type: FileType.custom, allowedExtensions: ["prg"]);
-    for (var n in NodeEngine.instance.nodeManager.nodes) {
-      n.uploadFirmware(f);
-    }
+    FilePicker.getFile(type: FileType.any).then((file){
+       for (var n in NodeEngine.instance.nodeManager.nodes) {
+          n.uploadFirmware(file);
+        }
+    }).catchError((error)
+    {
+      print("Error  : "+error.toString());
+    });
   }
 
   @override
@@ -252,7 +255,7 @@ class _NodeControlDialogState extends State<NodeControlDialog> {
 
   void flashFirmwarePressed() async {
     File fwFile = await FilePicker.getFile(
-        type: FileType.custom, allowedExtensions: ["prg"]);
+        type: FileType.any);
     widget.node.uploadFirmware(fwFile);
   }
 

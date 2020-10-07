@@ -84,7 +84,7 @@ class _NodeListPageState extends State<NodeListPage> {
             crossAxisSpacing: 8,
             crossAxisCount: 3,
             children: <Widget>[
-              /*NodeTile(node: testNode),
+             /* NodeTile(node: testNode),
               NodeTile(node: testNode),
               NodeTile(node: testNode),
               NodeTile(node: testNode),

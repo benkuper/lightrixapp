@@ -11,7 +11,6 @@ import 'package:multicast_lock/multicast_lock.dart';
 import 'package:udp/udp.dart';
 import 'nodemanager.dart';
 
-
 class CommandIDs {
   //Commands
   static final int startShow = 0x01;
@@ -80,7 +79,7 @@ class NodeEngine {
     Endpoint ep = Endpoint.unicast(ip, port: Port(41413));
 
     sender = await UDP.bind(ep);
-    if(useBroadcastForGlobalCommands) sender.socket.broadcastEnabled = true;
+    if (useBroadcastForGlobalCommands) sender.socket.broadcastEnabled = true;
     print("UDP sender bound to " + ep.address.toString());
 
     var ipSplit = ep.address.address.split(".");
@@ -104,35 +103,30 @@ class NodeEngine {
     multicastLock.release();
   }
 
-
   //SET PARAMS
-  void setGlobalBrightness(double value, {List<Node> nodes})
-  {
-    if(nodes== null || nodes.length == 0)
-    {
-      for(Node n in nodeManager.nodes) n.currentBrightness = value;
+  void setGlobalBrightness(double value, {List<Node> nodes}) {
+    if (nodes == null || nodes.length == 0) {
+      for (Node n in nodeManager.nodes) n.currentBrightness = value;
       currentBrightness = value;
-    } else{
-      for(Node n in nodes) n.currentBrightness = value;
+    } else {
+      for (Node n in nodes) n.currentBrightness = value;
     }
 
     brightnessChanged(value);
-    sendBrightness(value.toInt(), nodes:nodes);
-  } 
+    sendBrightness(value.toInt(), nodes: nodes);
+  }
 
-  void setStrobe(double value, {List<Node> nodes})
-  {
-    if(nodes== null || nodes.length == 0)
-    {
-      for(Node n in nodeManager.nodes) n.currentStrobe = value;
+  void setStrobe(double value, {List<Node> nodes}) {
+    if (nodes == null || nodes.length == 0) {
+      for (Node n in nodeManager.nodes) n.currentStrobe = value;
       currentStrobe = value;
-    } else{
-      for(Node n in nodes) n.currentStrobe = value;
+    } else {
+      for (Node n in nodes) n.currentStrobe = value;
     }
 
     strobeChanged(value);
-    sendStrobe(value.toInt(), nodes:nodes);
-  } 
+    sendStrobe(value.toInt(), nodes: nodes);
+  }
 
   // NODES COMMANDS
   void sendColor(Color color, {List<Node> nodes}) {
@@ -145,13 +139,14 @@ class NodeEngine {
   }
 
   void sendFade(double value, {List<Node> nodes}) {
-    List<int> data = getBytesFromInt32((value*1000).toInt());
+    List<int> data = getBytesFromInt32((value * 1000).toInt());
     sendEventCommand(CommandIDs.fade, data: data, nodes: nodes);
   }
 
   void sendStrobe(int value, {List<Node> nodes}) {
     //List<int> data = getBytesFromInt32((value*1000).toInt());
-    sendEventCommand(CommandIDs.strobe, data: [value == 0?0:10-value], nodes: nodes);
+    sendEventCommand(CommandIDs.strobe,
+        data: [value == 0 ? 0 : 10 - value], nodes: nodes);
   }
 
   void powerOff({List<Node> nodes}) {
@@ -205,7 +200,8 @@ class NodeEngine {
   }
 
   void sendShowCommand(double time) {
-    showStartTimestamp = timestampAtSync - (time * 1000).round(); //node sync time + diff since sync with node
+    showStartTimestamp = timestampAtSync -
+        (time * 1000).round(); //node sync time + diff since sync with node
 
     sendGlobalStateCommand(showStartTimestamp);
     //print("show time / node time : "+showStartTimestamp.toString()+" / "+timestampAtSync.toString());
@@ -217,10 +213,10 @@ class NodeEngine {
   }
 
   void sendGlobalStateCommand(int timestamp) {
-    if (nodeManager.getNumConnectedNode() == 0) {
-      //no connected node, return
-      return;
-    }
+    //  if (nodeManager.getNumConnectedNode() == 0) {
+    //no connected node, return
+    //    return;
+    //  }
 
     var bytes = [globalStateMagicByte];
     var seqIdBytes = getBytesFromInt32(globalStateSeqID++);
@@ -233,8 +229,8 @@ class NodeEngine {
 
   void sendPacket(List<int> bytes, {List<Node> nodes}) async {
     try {
-      
-      if((nodes == null || nodes.isEmpty) && !useBroadcastForGlobalCommands) nodes = nodeManager.nodes;
+      if ((nodes == null || nodes.isEmpty) && !useBroadcastForGlobalCommands)
+        nodes = nodeManager.nodes;
 
       if (nodes == null || nodes.isEmpty) {
         Endpoint ep = Endpoint.unicast(broadcastIP, port: Port(41412));
@@ -271,7 +267,7 @@ class NodeEngine {
         {
           globalStateSeqID =
               max(globalStateSeqID, getInt32FromBytes(packet.data, 1));
-         // int nodeStartPlaytimestamp = getInt32FromBytes(packet.data, 5);
+          // int nodeStartPlaytimestamp = getInt32FromBytes(packet.data, 5);
           /*
           print("Global state packet received  " +
               packet.data.toString() +
@@ -285,7 +281,6 @@ class NodeEngine {
 
       case 0x01: //node status
         {
-
           int nodeID = getInt32FromBytes(packet.data, 1);
           //int nodeGroupMask = getInt32FromBytes(packet.data, 5);
           int lastCommandID = packet.data[9];
@@ -320,10 +315,16 @@ class NodeEngine {
             strIndex = charIndex + 1;
           }
 
-          nodeManager.updateNode(packet.address, nodeID, nodeName, nodeBank,
-              nodeCurItemInSequence, nodeShowName, nodeLocalTime, nodePixels, nodeMessage);
-
-
+          nodeManager.updateNode(
+              packet.address,
+              nodeID,
+              nodeName,
+              nodeBank,
+              nodeCurItemInSequence,
+              nodeShowName,
+              nodeLocalTime,
+              nodePixels,
+              nodeMessage);
         }
         break;
 
@@ -359,7 +360,7 @@ class NodeEngine {
   ) {
     var buffer = new Uint8List(8).buffer;
     var bdata = new ByteData.view(buffer);
-    bdata.setFloat64(0,data);
+    bdata.setFloat64(0, data);
     return buffer.asUint8List();
   }
 
@@ -376,6 +377,4 @@ class NodeEngine {
 
     return result;
   }
-
-  
 }

@@ -25,8 +25,8 @@ class _NodeListPageState extends State<NodeListPage> {
   initState() {
     super.initState();
 
-    testNode = new Node(
-        InternetAddress.loopbackIPv4, 0, "PLAYLTXBALL", 0, 0, "TestShow", 0, 6);
+    testNode = new Node(InternetAddress("192.168.1.74"), 0, "PLAYLTXBALL", 0, 0,
+        "TestShow", 0, 6);
 
     nodeSubscription = NodeEngine.instance.nodeManager.nodeStream.stream
         .listen(nodeEventReceived);
@@ -57,13 +57,12 @@ class _NodeListPageState extends State<NodeListPage> {
   }
 
   void batchUploadPressed() async {
-    FilePicker.getFile(type: FileType.any).then((file){
-       for (var n in NodeEngine.instance.nodeManager.nodes) {
-          n.uploadFirmware(file);
-        }
-    }).catchError((error)
-    {
-      print("Error  : "+error.toString());
+    FilePicker.getFile(type: FileType.any).then((file) {
+      for (var n in NodeEngine.instance.nodeManager.nodes) {
+        n.uploadFirmware(file);
+      }
+    }).catchError((error) {
+      print("Error  : " + error.toString());
     });
   }
 
@@ -71,21 +70,23 @@ class _NodeListPageState extends State<NodeListPage> {
   Widget build(BuildContext context) {
     return Padding(
         padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
-        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <
-            Widget>[
-          Padding(
-              padding: EdgeInsets.fromLTRB(0,10,0,10),
-              child: Text("PROPS",
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold))),
-          Expanded(
-              child: GridView.count(
-            padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
-            mainAxisSpacing: 20,
-            crossAxisSpacing: 8,
-            crossAxisCount: 3,
+        child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-             /* NodeTile(node: testNode),
-              NodeTile(node: testNode),
+              Padding(
+                  padding: EdgeInsets.fromLTRB(0, 10, 0, 10),
+                  child: Text("PROPS",
+                      style: TextStyle(
+                          fontSize: 16, fontWeight: FontWeight.bold))),
+              Expanded(
+                  child: GridView.count(
+                padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                mainAxisSpacing: 20,
+                crossAxisSpacing: 8,
+                crossAxisCount: 3,
+                children: <Widget>[
+                  /* NodeTile(node: testNode),
+                  NodeTile(node: testNode),
               NodeTile(node: testNode),
               NodeTile(node: testNode),
               NodeTile(node: testNode),
@@ -95,38 +96,38 @@ class _NodeListPageState extends State<NodeListPage> {
               NodeTile(node: testNode),
               NodeTile(node: testNode),
               NodeTile(node: testNode),*/
-              for (Node n in NodeEngine.instance.nodeManager.nodes)
-                NodeTile(node: n)
-            ],
-          )),
-          Divider(thickness: 1),
-          Text("GLOBAL CONTROL",
+                  for (Node n in NodeEngine.instance.nodeManager.nodes)
+                    NodeTile(node: n)
+                ],
+              )),
+              Divider(thickness: 1),
+              Text("GLOBAL CONTROL",
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-          FittedBox(
-              fit: BoxFit.fitWidth,
-              child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    RaisedButton(
-                        child: Text("Upload Sequence"),
-                        color: Colors.grey[200],
-                        onPressed: batchUploadPressed),
-                    SizedBox(width: 10),
-                    RaisedButton(
-                        child: Text("Blackout All"),
-                        color: Colors.grey[200],
-                        onPressed: () {
-                          NodeEngine.instance.sendColor(Colors.black);
-                        }),
-                    SizedBox(width: 10),
-                    RaisedButton(
-                      child: Text("Power Off All"),
-                      color: Colors.grey[200],
-                      onPressed: NodeEngine.instance.powerOff,
-                    )
-                  ])),
-      Divider(thickness: 1),
-        ]));
+              FittedBox(
+                  fit: BoxFit.fitWidth,
+                  child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        RaisedButton(
+                            child: Text("Upload Sequence"),
+                            color: Colors.grey[200],
+                            onPressed: batchUploadPressed),
+                        SizedBox(width: 10),
+                        RaisedButton(
+                            child: Text("Blackout All"),
+                            color: Colors.grey[200],
+                            onPressed: () {
+                              NodeEngine.instance.sendColor(Colors.black);
+                            }),
+                        SizedBox(width: 10),
+                        RaisedButton(
+                          child: Text("Power Off All"),
+                          color: Colors.grey[200],
+                          onPressed: NodeEngine.instance.powerOff,
+                        )
+                      ])),
+              Divider(thickness: 1),
+            ]));
   }
 }
 
@@ -212,7 +213,7 @@ class _NodeControlDialogState extends State<NodeControlDialog> {
   final infoBoxKey = GlobalKey<_NodeInfoBoxState>();
   final colorPickerKey = GlobalKey<CircleColorPickerState>();
 
- /* static Widget blockPickerLayoutBuilder(
+  /* static Widget blockPickerLayoutBuilder(
       BuildContext context, List<Color> colors, PickerItem child) {
     return Container(
       width: 300.0,
@@ -252,8 +253,7 @@ class _NodeControlDialogState extends State<NodeControlDialog> {
   }
 
   void flashFirmwarePressed() async {
-    File fwFile = await FilePicker.getFile(
-        type: FileType.any);
+    File fwFile = await FilePicker.getFile(type: FileType.any);
     widget.node.uploadFirmware(fwFile);
   }
 
@@ -331,7 +331,7 @@ class _NodeControlDialogState extends State<NodeControlDialog> {
           ])),
       Positioned(
         right: 2,
-        top:2,
+        top: 2,
         child: GestureDetector(
           onTap: () {
             Navigator.of(context).pop();
@@ -341,7 +341,7 @@ class _NodeControlDialogState extends State<NodeControlDialog> {
             child: CircleAvatar(
               radius: 16.0,
               backgroundColor: Colors.grey[800],
-              child: Icon(Icons.close, color: Colors.grey[300],size: 16),
+              child: Icon(Icons.close, color: Colors.grey[300], size: 16),
             ),
           ),
         ),

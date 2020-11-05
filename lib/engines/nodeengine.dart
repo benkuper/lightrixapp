@@ -37,8 +37,11 @@ class NodeEngine {
   InternetAddress broadcastIP;
   UDP sender;
   UDP receiver;
+  final bool useMulticastLock = true;
   final multicastLock = new MulticastLock(); //for receiving broadcast
   final bool useBroadcastForGlobalCommands = false;
+
+  final bool useTestNode = false;
 
   bool globalStateIsPlaying = false;
   double globalStateTime = 0;
@@ -64,13 +67,18 @@ class NodeEngine {
     instance = this;
     init();
 
+    if (useTestNode) {
+      nodeManager.updateNode(InternetAddress("192.168.1.74"), 0, "PLAYLTXBALL",
+          0, 0, "TestShow", 0, 1, "testMessage");
+    }
+
     globalStateTimer =
         Timer.periodic(Duration(milliseconds: 200), globalStateTimerCallback);
   }
 
   void init() async {
     WidgetsFlutterBinding.ensureInitialized();
-    multicastLock.acquire();
+    if (useMulticastLock) multicastLock.acquire();
 
     List<InternetAddress> ips = await getIPs();
 
@@ -79,7 +87,7 @@ class NodeEngine {
     Endpoint ep = Endpoint.unicast(ip, port: Port(41413));
 
     sender = await UDP.bind(ep);
-    if (useBroadcastForGlobalCommands) sender.socket.broadcastEnabled = true;
+    sender.socket.broadcastEnabled = true;
     print("UDP sender bound to " + ep.address.toString());
 
     var ipSplit = ep.address.address.split(".");
@@ -91,7 +99,7 @@ class NodeEngine {
         .bind(Endpoint.unicast(InternetAddress("0.0.0.0"), port: Port(41412)));
     receiver.socket.broadcastEnabled = true;
 
-    print(receiver.socket.isBroadcast);
+    print("Is receiver broadcast ? " + receiver.socket.isBroadcast.toString());
 
     // receiving\listening
     await receiver.listen(packetReceived);
@@ -100,7 +108,7 @@ class NodeEngine {
   void clear() //should be call at app exit
   {
     // we should release lock after listening
-    multicastLock.release();
+    if (useMulticastLock) multicastLock.release();
   }
 
   //SET PARAMS
@@ -229,15 +237,19 @@ class NodeEngine {
 
   void sendPacket(List<int> bytes, {List<Node> nodes}) async {
     try {
-      if ((nodes == null || nodes.isEmpty) && !useBroadcastForGlobalCommands)
-        nodes = nodeManager.nodes;
-
-      if (nodes == null || nodes.isEmpty) {
+      if (useBroadcastForGlobalCommands) {
+        //BROADCAST
+        //print("Send broadcast IP");
         Endpoint ep = Endpoint.unicast(broadcastIP, port: Port(41412));
         await sender.send(bytes, ep); //
       } else {
+        //SEPARATE IP
+        if ((nodes == null || nodes.isEmpty)) {
+          nodes = nodeManager.nodes;
+        }
+        //print("Send separate IP");
         for (var n in nodes) {
-          //print("Send to specific ip " + n.ip.address.toString());
+          //print("Send to IP " + n.ip.toString());
           Endpoint ep = Endpoint.unicast(n.ip, port: Port(41412));
           await sender.send(bytes, ep); //
         }
@@ -251,6 +263,7 @@ class NodeEngine {
   //RECEIVE
 
   void packetReceived(Datagram packet) {
+    //print("Received  packet received from " + packet.address.address.toString());
     if (packet.address == ip) {
       //print("received local packet " + packet.data.length.toString());
       return; //do not listen to own packets

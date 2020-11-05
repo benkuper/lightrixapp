@@ -19,14 +19,9 @@ class NodeListPage extends StatefulWidget {
 class _NodeListPageState extends State<NodeListPage> {
   StreamSubscription<NodeEvent> nodeSubscription;
 
-  Node testNode;
-
   @override
   initState() {
     super.initState();
-
-    testNode = new Node(InternetAddress("192.168.1.74"), 0, "PLAYLTXBALL", 0, 0,
-        "TestShow", 0, 6);
 
     nodeSubscription = NodeEngine.instance.nodeManager.nodeStream.stream
         .listen(nodeEventReceived);
@@ -85,17 +80,6 @@ class _NodeListPageState extends State<NodeListPage> {
                 crossAxisSpacing: 8,
                 crossAxisCount: 3,
                 children: <Widget>[
-                  /* NodeTile(node: testNode),
-                  NodeTile(node: testNode),
-              NodeTile(node: testNode),
-              NodeTile(node: testNode),
-              NodeTile(node: testNode),
-              NodeTile(node: testNode),
-              NodeTile(node: testNode),
-              NodeTile(node: testNode),
-              NodeTile(node: testNode),
-              NodeTile(node: testNode),
-              NodeTile(node: testNode),*/
                   for (Node n in NodeEngine.instance.nodeManager.nodes)
                     NodeTile(node: n)
                 ],

@@ -1,4 +1,4 @@
-package com.lightrix.ltxremote
+package com.example.ios
 
 import io.flutter.embedding.android.FlutterActivity
 

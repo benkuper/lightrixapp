@@ -38,15 +38,27 @@ class ShowControlEngine {
   Function(double time) totalTimeChanged;
   Function(File file) audioFileChanged;
 
-  void setBank(int id) {
-    selectedBankID = id;
+  void selectPrevBank() {
+    stopPlaying();
+    NodeEngine.instance.selectPrevBank();
+    Fluttertoast.cancel();
+    Fluttertoast.showToast(msg: "Previous bank");
+  }
+
+  void selectNextBank() {
+    stopPlaying();
+    NodeEngine.instance.selectNextBank();
+    Fluttertoast.cancel();
+    Fluttertoast.showToast(msg: "Next bank");
   }
 
   void seek(double time) {
     setCurrentTime(time);
 
     //force sending message here
-    NodeEngine.instance.updateShowState(isPlaying, currentTime, true);
+    if (isPlaying) {
+      NodeEngine.instance.sendShowCommand(currentTime, true);
+    }
 
     if (hasAudio)
       audioPlayer.seek(Duration(milliseconds: (time * 1000).round()));
@@ -54,7 +66,7 @@ class ShowControlEngine {
 
   void setCurrentTime(double time) {
     currentTime = time;
-    NodeEngine.instance.updateShowState(isPlaying, currentTime);
+    NodeEngine.instance.globalStateTime = currentTime;
     currentTimeChanged(currentTime);
   }
 
@@ -73,34 +85,37 @@ class ShowControlEngine {
       audioPlayer.stop();
       audioPlayer.seek(Duration(seconds: 0));
     }
-
-    NodeEngine.instance.stopShowNoSync();
     setCurrentTime(0);
-
-    Fluttertoast.showToast(msg: "Show stopped.");
   }
 
   void setPlaying(bool value) {
     bool hasChanged = isPlaying != value;
+
+    if (!hasChanged) return;
     isPlaying = value;
 
     if (isPlaying) {
+      NodeEngine.instance.sendShowCommand(currentTime, true);
+
       if (hasAudio) {
-        print("Play audio here");
         audioPlayer.play();
       }
 
       playTimer =
           Timer.periodic(Duration(milliseconds: playUpdateRate), onTimerTick);
 
+      Fluttertoast.cancel();
       Fluttertoast.showToast(
           msg: hasChanged ? "Show started" : "Show resumed.");
     } else {
+      NodeEngine.instance.sendStopShow();
+
       if (hasAudio) audioPlayer.pause();
       playTimer?.cancel();
-    }
 
-    NodeEngine.instance.updateShowState(isPlaying, currentTime);
+      Fluttertoast.cancel();
+      Fluttertoast.showToast(msg: "Show stopped.");
+    }
 
     playStateChanged(isPlaying);
   }

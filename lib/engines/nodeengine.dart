@@ -77,7 +77,7 @@ class NodeEngine {
     }
 
     globalStateTimer =
-        Timer.periodic(Duration(milliseconds: 10), globalStateTimerCallback);
+        Timer.periodic(Duration(milliseconds: 500), globalStateTimerCallback);
 
     connectivityTimer =
         Timer.periodic(Duration(seconds: 200), connectivityTimerCallback);
@@ -164,18 +164,6 @@ class NodeEngine {
   }
 
   //Show
-  void updateShowState(bool isPlaying, double time,
-      [bool forceSending = false]) {
-    if (globalStateIsPlaying != isPlaying || forceSending) {
-      globalStateIsPlaying = isPlaying;
-      if (globalStateIsPlaying || forceSending) {
-        //startShowNoSync();
-        sendShowCommand(globalStateTime);
-      }
-    }
-
-    globalStateTime = time;
-  }
 
   void selectPrevBank({List<Node> nodes}) {
     sendEventCommand(CommandIDs.prevShow, nodes: nodes);
@@ -186,17 +174,19 @@ class NodeEngine {
   }
 
   void startShowNoSync({List<Node> nodes}) {
+    print("Send start show no sync");
     sendEventCommand(CommandIDs.startShow, nodes: nodes);
   }
 
   void stopShowNoSync({List<Node> nodes}) {
+    print("Send stop show no sync");
     sendEventCommand(CommandIDs.stopShow, nodes: nodes);
   }
 
   //TIMER
   void globalStateTimerCallback(Timer t) {
     if (globalStateIsPlaying) {
-      //sendShowCommand(globalStateTime); //always sending makes glitches
+      sendShowCommand(globalStateTime); //always sending makes glitches
     } else {
       //sendStopShow();
     }
@@ -219,9 +209,13 @@ class NodeEngine {
     sendPacket(bytes, nodes: nodes);
   }
 
-  void sendShowCommand(double time) {
-    showStartTimestamp = timestampAtSync -
-        (time * 1000).round(); //node sync time + diff since sync with node
+  void sendShowCommand(double time, [bool setStart = false]) {
+    if (setStart) {
+      showStartTimestamp = timestampAtSync -
+          (time * 1000).round(); //node sync time + diff since sync with node
+    }
+
+    globalStateIsPlaying = true;
 
     sendGlobalStateCommand(showStartTimestamp);
     //print("show time / node time : "+showStartTimestamp.toString()+" / "+timestampAtSync.toString());
@@ -229,6 +223,7 @@ class NodeEngine {
 
   void sendStopShow() {
     stopShowNoSync();
+    globalStateIsPlaying = false;
     sendGlobalStateCommand(0);
   }
 
@@ -237,6 +232,8 @@ class NodeEngine {
     //no connected node, return
     //    return;
     //  }
+
+    print("Send global state with timestamp: " + timestamp.toString());
 
     var bytes = [globalStateMagicByte];
     var seqIdBytes = getBytesFromInt32(globalStateSeqID++);

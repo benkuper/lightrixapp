@@ -126,9 +126,9 @@ class _ShowControlPageState extends State<ShowControlPage> {
       Divider(),
       */
           Padding(
-            padding: EdgeInsets.fromLTRB(0,0,0,10),
-             child:Text("MAIN CONTROL",
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold))),
+              padding: EdgeInsets.fromLTRB(0, 0, 0, 10),
+              child: Text("MAIN CONTROL",
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold))),
           TimeTransport(
             key: transportKey,
             onPlayPressed: widget.engine.togglePlaying,
@@ -308,6 +308,7 @@ class _TimelineState extends State<Timeline> {
 
   void sliderChanged(double value) {
     setCurrentTime(currentTime = value);
+
     widget.onSeek(value);
   }
 
@@ -377,18 +378,16 @@ class _AudioChooserState extends State<AudioChooser> {
 
   void chooseAudioFile() async {
     //add the wtf file to force using generic picker and not media picker
-    FilePicker.getFile(type: FileType.any).then((file){
-      if(file == null) 
-      {
-      }else
-      {
+    FilePicker.getFile(type: FileType.any).then((file) {
+      if (file == null) {
+      } else {
         widget.onFileChanged(file);
       }
-      
-    }).catchError((error)
-    {
+    }).catchError((error) {
       Fluttertoast.showToast(
-        msg:"[FilePicker] Error selecting audio file : "+error.toString(), backgroundColor: Colors.red, textColor: Colors.red[100]);
+          msg: "[FilePicker] Error selecting audio file : " + error.toString(),
+          backgroundColor: Colors.red,
+          textColor: Colors.red[100]);
     });
   }
 

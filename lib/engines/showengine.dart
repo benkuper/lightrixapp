@@ -44,6 +44,10 @@ class ShowControlEngine {
 
   void seek(double time) {
     setCurrentTime(time);
+
+    //force sending message here
+    NodeEngine.instance.updateShowState(isPlaying, currentTime, true);
+
     if (hasAudio)
       audioPlayer.seek(Duration(milliseconds: (time * 1000).round()));
   }

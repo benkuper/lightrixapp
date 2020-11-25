@@ -47,6 +47,8 @@ class NodeEngine {
   double globalStateTime = 0;
   Timer globalStateTimer;
 
+  Timer connectivityTimer;
+
   //Packet
   final int eventMagicByte = 0x42; // 'B'
   final int globalStateMagicByte = 0x61; // 'a'
@@ -65,6 +67,8 @@ class NodeEngine {
 
   NodeEngine() {
     instance = this;
+
+    WidgetsFlutterBinding.ensureInitialized();
     init();
 
     if (useTestNode) {
@@ -73,17 +77,16 @@ class NodeEngine {
     }
 
     globalStateTimer =
-        Timer.periodic(Duration(milliseconds: 200), globalStateTimerCallback);
+        Timer.periodic(Duration(milliseconds: 10), globalStateTimerCallback);
+
+    connectivityTimer =
+        Timer.periodic(Duration(seconds: 200), connectivityTimerCallback);
   }
 
   void init() async {
-    WidgetsFlutterBinding.ensureInitialized();
     if (useMulticastLock) multicastLock.acquire();
 
-    List<InternetAddress> ips = await getIPs();
-
-    if (ips.length == 0) return;
-    ip = ips[0];
+    ip = await getFirstIP();
     Endpoint ep = Endpoint.unicast(ip, port: Port(41413));
 
     sender = await UDP.bind(ep);
@@ -92,7 +95,6 @@ class NodeEngine {
 
     var ipSplit = ep.address.address.split(".");
     ipSplit[3] = "255";
-    print(ipSplit.join("."));
     broadcastIP = InternetAddress(ipSplit.join("."));
 
     receiver = await UDP
@@ -162,10 +164,11 @@ class NodeEngine {
   }
 
   //Show
-  void updateShowState(bool isPlaying, double time) {
-    if (globalStateIsPlaying != isPlaying) {
+  void updateShowState(bool isPlaying, double time,
+      [bool forceSending = false]) {
+    if (globalStateIsPlaying != isPlaying || forceSending) {
       globalStateIsPlaying = isPlaying;
-      if (globalStateIsPlaying) {
+      if (globalStateIsPlaying || forceSending) {
         //startShowNoSync();
         sendShowCommand(globalStateTime);
       }
@@ -192,11 +195,20 @@ class NodeEngine {
 
   //TIMER
   void globalStateTimerCallback(Timer t) {
-    if (globalStateIsPlaying)
-      sendShowCommand(globalStateTime);
-    else {
+    if (globalStateIsPlaying) {
+      //sendShowCommand(globalStateTime); //always sending makes glitches
+    } else {
       //sendStopShow();
     }
+  }
+
+  void connectivityTimerCallback(Timer t) {
+    getFirstIP().then((InternetAddress newIP) {
+      if (newIP != ip) {
+        print("IP Changed, reinit !");
+        init();
+      }
+    });
   }
 
   // GENERIC SEND COMMAND (internal)
@@ -389,5 +401,11 @@ class NodeEngine {
     });
 
     return result;
+  }
+
+  Future<InternetAddress> getFirstIP() async {
+    List<InternetAddress> ips = await getIPs();
+    if (ips.length == 0) return InternetAddress.loopbackIPv4;
+    return ips[0];
   }
 }

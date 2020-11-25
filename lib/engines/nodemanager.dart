@@ -1,6 +1,8 @@
-
 import 'dart:async';
 import 'dart:io';
+import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+
 import 'node.dart';
 
 class NodeManager {
@@ -16,8 +18,16 @@ class NodeManager {
     managerTimer = Timer.periodic(Duration(seconds: 1), managerTimerCallback);
   }
 
-  Node updateNode(InternetAddress nodeIP, int id, String name, int bank,
-      int curItemInSequence, String showName, int localTime, int numPixels, String message) {
+  Node updateNode(
+      InternetAddress nodeIP,
+      int id,
+      String name,
+      int bank,
+      int curItemInSequence,
+      String showName,
+      int localTime,
+      int numPixels,
+      String message) {
     Node n = getNodeWithID(id);
     bool nodeAlreadyExists = n != null;
     //print("Update node " + name.toString());
@@ -75,5 +85,27 @@ class NodeManager {
         }
       }
     }
+  }
+
+  void sendWifiCredentials(String ssid, String pass) {
+    if (ssid.isEmpty) {
+      toastError("SSID can not be empty !");
+      return;
+    }
+
+    if (pass.isEmpty) {
+      toastError("Pass can not be empty !");
+      return;
+    }
+
+    Fluttertoast.showToast(
+        msg:
+            "Sending Wifi settings : " + ssid + " : " + pass + " to all nodes");
+    for (var n in nodes) n.sendWifiCredentials(ssid, pass);
+  }
+
+  void toastError(msg) {
+    Fluttertoast.showToast(
+        msg: msg, backgroundColor: Colors.red, textColor: Colors.red[100]);
   }
 }

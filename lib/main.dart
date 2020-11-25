@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:ltxremote/pages/configpage.dart';
 import 'package:ltxremote/pages/livecontrol.dart';
 import 'package:ltxremote/pages/nodelist.dart';
 import 'package:ltxremote/pages/showcontrol.dart';
@@ -63,7 +64,11 @@ class _MainPageState extends State<MainPage>
     MenuPage(
         name: "Play All",
         content: LiveControlPage(),
-        icon: Icons.palette) //, color:Colors.primaries[8]),
+        icon: Icons.palette), //, color:Colors.primaries[8]),
+    MenuPage(
+        name: "Config",
+        content: ConfigPage(),
+        icon: Icons.settings) //, color:Colors.primaries[8]),
   ];
 
   @override

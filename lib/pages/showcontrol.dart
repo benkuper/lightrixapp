@@ -1,6 +1,5 @@
 import 'dart:math';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:ltxremote/engines/nodeengine.dart';
 import 'package:ltxremote/engines/showengine.dart';
 import 'dart:io';
 import 'package:file_picker/file_picker.dart';
@@ -58,6 +57,7 @@ class _ShowControlPageState extends State<ShowControlPage> {
     setState(() {});
   }
 
+  /*
   void bankButtonPressed(_BankButtonState bt) {
     if (selectedBank != null) selectedBank.setSelected(false);
 
@@ -73,6 +73,7 @@ class _ShowControlPageState extends State<ShowControlPage> {
       widget.engine.setBank(-1);
     }
   }
+  */
 
   //EVENTS
   void audioFileChanged(File file) {
@@ -133,8 +134,8 @@ class _ShowControlPageState extends State<ShowControlPage> {
             key: transportKey,
             onPlayPressed: widget.engine.togglePlaying,
             onStopPressed: widget.engine.stopPlaying,
-            onPrevPressed: NodeEngine.instance.selectPrevBank,
-            onNextPressed: NodeEngine.instance.selectNextBank,
+            onPrevPressed: widget.engine.selectPrevBank,
+            onNextPressed: widget.engine.selectNextBank,
             onSeek: widget.engine.seek,
           ),
           Spacer(),
@@ -264,12 +265,12 @@ class _TimeTransportState extends State<TimeTransport> {
                               : "assets/icons/play_off.png"))),
                   SizedBox(width: 10),
                   Listener(
-                    onPointerDown: (event) {
-                      widget.onStopPressed();
-                    },
-                    child: Image(
-                        height: 50, image: AssetImage("assets/icons/stop.png")),
-                  ),
+                      onPointerDown: (event) {
+                        widget.onStopPressed();
+                      },
+                      child: Image(
+                          height: 50,
+                          image: AssetImage("assets/icons/stop.png"))),
                   SizedBox(width: 10),
                   Listener(
                     onPointerDown: (event) {
